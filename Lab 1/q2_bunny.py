@@ -38,17 +38,18 @@ class Agent :
 
 agentObj = Agent()
 envObj = Environment(currentPos, shorePos)
-print("current position = %s " % str(envObj.coord))
-print("shore position = %s " % str(envObj.shore))
+# print("current position = ", envObj.coord)
+# print("shore position = ", envObj.shore)
+
 
 print("Current Location, Bunny's Location, Perception, Action, Shore Location")
-print(str(envObj.coord) + ", " + str(agentObj.move) + ", " + str(agentObj.getPerception(envObj)) + ", " + "None, " + str(envObj.shore))
+print(envObj.coord ,",", agentObj.move, ",", agentObj.getPerception(envObj), ", None,", envObj.shore)
 
 
 while(agentObj.getPerception(envObj) == False) :
 	
 	x = agentObj.getPerception(envObj)
 	agentObj.takeAction(envObj)
-	print(str(envObj.coord) + ", " + str(agentObj.move) + ", " + str(agentObj.getPerception(envObj)) + ", " + str("right, "*(agentObj.move > 0)) + str("left, "*(agentObj.move < 0)) + str(envObj.shore))
+	print(envObj.coord, ",", (envObj.coord-currentPos) , ",", agentObj.getPerception(envObj), ",", "right,"*(agentObj.move > 0) + "left,"*(agentObj.move < 0), envObj.shore)
 
 print("Bunny reached Shore")
