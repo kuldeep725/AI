@@ -23,14 +23,6 @@ class Environment :
 # class Agent begins
 class Agent :
 
-	def __init__(self) :
-		self.left = 0
-		self.right = 0
-		self.up = 0
-		self.down = 0
-		self.state = 0
-		self.c = 1
-
 	def getPerception(self, envObj) :
 		return envObj.providePerception()
 
