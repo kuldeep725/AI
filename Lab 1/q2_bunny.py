@@ -1,7 +1,29 @@
 # Name 		: Kuldeep Singh Bhandari
 # Roll No.  : 111601009
 # Aim  		: With environment "sea", with agent "bunny", help bunny to reach to the shore
-#
+# Idea      : The idea is that bunny will assume that he is at position 0 and will move
+#             to position 1 and if he is not at shore, he will move to position -1 then
+#             he will again check... if he is not at shore, he will move to position 2
+#             and so on until he reaches the shore.
+# Format   : <bunny's position> <shore's position> 
+# Sample Input :
+#2 8
+# Sample output :
+#Current Location, Bunny's Location, Perception, Action, Shore Location
+#2 , 0 , False , None, 8
+#3 , 1 , False , right, 8
+#1 , -1 , False , left, 8
+#4 , 2 , False , right, 8
+#0 , -2 , False , left, 8
+#5 , 3 , False , right, 8
+#-1 , -3 , False , left, 8
+#6 , 4 , False , right, 8
+#-2 , -4 , False , left, 8
+#7 , 5 , False , right, 8
+#-3 , -5 , False , left, 8
+#8 , 6 , True , right, 8
+#Bunny reached Shore
+
 class Environment :
 
 	def __init__(self, coord, shore) :

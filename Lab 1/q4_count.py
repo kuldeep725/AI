@@ -1,6 +1,11 @@
 # Name 		: Kuldeep Singh Bhandari
 # Roll No.  : 111601009
-
+# Aim       : To find the number of words in a given file
+# Idea     : Initialise begin to be False. Loop through each character in the
+            # the file and as you find a character which is not ' ' or '\n' ,
+            # set begin True, then keep it true until you find something ' ' or 
+            # '\n', then set begin False, and increment c which is number of
+            # words in the file.
 
 f = open("test.txt", "r")
 begin = False
