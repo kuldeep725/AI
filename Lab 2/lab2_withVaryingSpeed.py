@@ -1,6 +1,6 @@
 # Name 		: Kuldeep Singh Bhandari
 # Roll No.  : 111601009
-# Aim       : To implement Simple Traffic Simulator
+# Aim       : To implement Simple Traffic Simulator with varying speed
 import numpy as np
 import sys
 
@@ -89,12 +89,32 @@ for i in range(0, TOT_RUN) :
     ind1 = env.V[x, y]
     # <ind2> stores the node at which vehicle <x> will reach from <ind1>
     ind2= env.V[x, y+1]
+    # <aheadVehicles> stores the list of departure time of vehicles from road (i, j)
+    aheadVehicles = []
+    # <speed> stores number of vehicles ahead of a vehicles in the list 
+    # <aheadVehicles>
+    speed = 0
     # loop to count number of vehicles which are ahead of current vehicle <x>
+    # and store the list of departure time of vehicles 
     for time in roadList[ind1][ind2] :
         if(time > startTime) :
             cnt += 1
-    # <endTime> stores the time at which vehicle <x> reaches the node <ind2>       
-    endTime = startTime + env.R[ind1, ind2] / calcSpeed(cnt)
+            aheadVehicles.append(time)
+
+    # <endTime> stores the time at which vehicle <x> stores the departure time
+    # from road (i, j) --> initialise with <startTime>
+    endTime = startTime
+    # <totDist> stores the distance travelled from starting point
+    totDist = 0
+    # loop to calculate the distance travelled and time taken when the other vehicles
+    # were also present
+    for time in aheadVehicles :
+        totDist += calcSpeed(cnt) * (time - endTime)
+        endTime += (time - endTime)
+        speed += 1
+        cnt -= 1
+           
+    endTime += (env.R[ind1, ind2] - totDist) / calcSpeed(cnt)
     # saving start time of vehicle <x> at node <ind2>
     out[x][y+2] = endTime
     # changing start time of vehicle <x> which is now equal to <endTime> 
@@ -112,9 +132,9 @@ for i in range(0, TOT_RUN) :
         env.M[x, 0] = sys.maxsize
 
 # print <out> matrix
-# print(out)
+print(out)
 # save matrix <out> as csv file
-np.savetxt('output.csv', np.asarray(out), '%5.10f', delimiter=',', 
+np.savetxt('output2.csv', np.asarray(out), '%5.10f', delimiter=',', 
            header='Vehicle, site1,site2,site3,site4,site5')
 print('Saving output in text file <output.csv>...')
 
