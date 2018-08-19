@@ -109,9 +109,13 @@ for i in range(0, TOT_RUN) :
     # loop to calculate the distance travelled and time taken when the other vehicles
     # were also present
     for time in aheadVehicles :
+        # calculate the distance travelled by vehicle <x> when <cnt> vehicles were
+        # ahead
         totDist += calcSpeed(cnt) * (time - endTime)
+        # add time to travel distance when <cnt> vehicle were present to when <cnt> 
+        # vehicle were present to <endTime>
         endTime += (time - endTime)
-        speed += 1
+        # decrease number of vehicle ahead of vehicle <x>
         cnt -= 1
            
     endTime += (env.R[ind1, ind2] - totDist) / calcSpeed(cnt)
