@@ -4,26 +4,11 @@
 import random
 import math
 class Coordinate :
-    
-#    def __init__(self, x) :
-#        self.x = x;
-#        self.y = 0;
-#        self.z = 0;
-#        
-#    def __init__(self, x, y) :
-#        self.x = x;
-#        self.y = y;
-#        self.z = 0;
         
     def __init__(self, x, y = 0, z = 0) :
         self.x = x;
         self.y = y;
         self.z = z;
-        
-#    def equalTo(self, coordGoal) :
-#        return (self.x == coordGoal.x and 
-#            self.y == coordGoal.y and
-#            self.z == coordGoal.z)
 
 class Environment :
 
@@ -59,9 +44,6 @@ class Environment :
         elif(action == 'backward') :
             if(self.coord.z <= 0) : return False;
             self.coord.z += -1;
-#        self.coord.x = otherCoord.x + math.ceil(L/2);
-#        if(self.curr_dim >= 2) : self.coord.y = otherCoord.y + math.ceil(L/2);
-#        if(self.curr_dim >= 3) : self.coord.z = otherCoord.z + math.ceil(L/2);
         return True;
     
     def providePerception(self) :
@@ -87,22 +69,16 @@ class Agent :
         if(not status) : return;
         
         if(self.action == 'left') :
-#            if(self.coord.x <= -L/2) : return;
             self.coord.x += -1
         elif(self.action == 'right') :
-#            if(self.coord.x >= L/2) :return;
             self.coord.x += 1
         elif(self.action == 'up') :
-#            if(self.coord.y >= L/2) : return;
             self.coord.y += 1;
         elif(self.action == 'down') :
-#            if(self.coord.y <= -L/2) : return;
             self.coord.y += -1;
         elif(self.action == 'forward') :
-#            if(self.coord.z >= L/2) : return;
             self.coord.z += 1;
         elif(self.action == 'backward') :
-#            if(self.coord.z <= -L/2) : return;
             self.coord.z += -1;
             
         
