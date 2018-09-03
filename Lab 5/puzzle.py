@@ -1,18 +1,23 @@
-# Name         : Kuldeep Singh Bhandari
-# Roll No.  : 111601009
+# Name         : Kuldeep Singh Bhandari (111601009)
+#              : Amit Vikram Singh (111601001)
 
 import numpy as np
-from Queue import Queue
+from queue import Queue
 import copy
 
+# class <Node> represents a state which possess informations like
+# <M> which is matrix of the current state,
+# <pos> which is the coordinate of current position of the empty block,
+# <action> which is action taken by parent to reach this state
+# <parent> which is the parent state of this state
 class Node :
-    # <M> is matrix
-    # <pos> is position of empty block
-    def __init__(self, M, pos, action) :
+    def __init__(self, M, pos, action, parent) :
         self.M = M
-        self.pos = pos
+        self.pos = pos                   # type : <Coordinate> class
         self.action = action
+        self.parent = parent             # type : <Node> class
 
+# class <Coordinate> represents the x-coordinate and y-coordinate of a block
 class Coordinate :
 
     def __init__(self, x, y) :
@@ -26,21 +31,30 @@ def mod(a, b) :
     return a % b;
 
 def d(coord, n) :
-    return (n-coord.x) + (n-coord.y)
+    return (n-coord.r) + (n-coord.c)
 
 def parity(coord, M, n) :
     sum = 0
     for i in range(n*n) :
-        if(M[i/4][i%4] == n*n) : continue
+        if(M[i//n][i%n] == n*n) : continue
         for j in range(i+1, n*n) :
-            sum += I(M[i/4][i%4] > M[j/4][j%4])
-    return mod(d(coord) + sum, 2)
+            sum += I(M[i//n][i%n] > M[j//n][j%n])
+    return mod(d(coord, n-1) + sum, 2)
+
+def printPath(curr) :
+    if(curr is None) : return
+    printPath(curr.parent)
+    print(curr.action, "\n", curr.M)
+    
 
 class Matrix :
 
     def __init__(self, M) :
         self.M = M
 
+    # function <__eq__> overrides "==" operator so whenever we write 
+    # "matrix1 == matrx2", it will check whether all corresponding elements
+    # of both matrices are equal
     def __eq__(self, other) :
         n = other.M.shape[0]
         for i in range(n) :
@@ -49,6 +63,7 @@ class Matrix :
                     return False
         return True
 
+    # overriding hashing function
     def __hash__(self) :
         return hash(str(self.M))
 
@@ -60,7 +75,7 @@ class Environment :
         self.M = M
         
     def updateState (self, action) :
-        print("updateState fired...")
+#        print("updateState fired...")
         r = self.coord.r               #row number of empty block
         c = self.coord.c               #column number of empty block
         if(action == 'left') :         #move empty block left 
@@ -103,36 +118,47 @@ class Agent :
     def getPerception(self, envObj) :
         return envObj.providePerception()
 
+# stores explored states
 s = set()
 q = Queue()
-n = 3
-# M = np.array([[3, 1], [2, 4]])
-M = np.array([[1, 2, 3], [4, 5, 8], [6, 7, 9]]) # elements from 1 to n*n
-envObj = Environment(n, M)
-agent = Agent()
-actionList = ['left', 'right', 'up', 'down']
-q.put(Node(M, Coordinate(2, 2), 'None'))        # rows and columns from 0 to n-1
-s.add(Matrix(M))
-check = False
-while(not q.empty()) :
-    curr = q.get()
-    print(curr.M)
-    envObj.M = curr.M.copy()
-    envObj.coord = copy.copy(curr.pos)
-    if(agent.getPerception(envObj)) :
-        check = True
-        print("inside", curr.M)
-        break
-
-    for action in actionList :
+n = 3   # defines size  of matrix n*n
+#M = np.array([[3, 1], [2, 4]])
+M = np.array([[3, 1, 2], [4, 5, 8], [6, 7, 9]]) # elements from 1 to n*n
+# check if parity of the given matrix is odd
+if(parity(Coordinate(n-1, n-1), M, n) == 1) :
+    print("Odd Parity")
+else :    
+    envObj = Environment(n, M)
+    agent = Agent()
+    actionList = ['left', 'right', 'up', 'down']
+    curr = Node(M.copy(), Coordinate(2, 2), 'None', None)
+    q.put(curr)        # rows and columns from 0 to n-1
+    # make matrix M explored
+    s.add(Matrix(M))
+    check = False
+    while(not q.empty()) :
+        curr = q.get()
+        # update environment matrix with new matrix of state <curr>
         envObj.M = curr.M.copy()
+        # update coordinate of enviroment empty block with that of state <curr>
         envObj.coord = copy.copy(curr.pos)
-        flag = agent.takeAction(envObj, action)
-        m = Matrix(copy.copy(envObj.M))
-        print("flag", flag, "visited", m not in s)
-        if(flag and (m not in s)) :
-            q.put(Node(envObj.M.copy(), copy.copy(envObj.coord), action)) 
-            s.add(m)
-
-if(not check) :
-    print("Odd parity")
+        # if requried state is found, then break
+        if(agent.getPerception(envObj)) :
+            destination = curr
+            break
+    
+        # going through all possible actions
+        for action in actionList :
+            # update environment matrix with new matrix of state <curr>
+            envObj.M = curr.M.copy()
+            # update coordinate of enviroment empty block with that of state <curr>
+            envObj.coord = copy.copy(curr.pos)
+            flag = agent.takeAction(envObj, action)
+            m = Matrix(copy.copy(envObj.M))
+    #        print("flag", flag, "visited", m not in s)
+            if(flag and (m not in s)) :
+                q.put(Node(envObj.M.copy(), copy.copy(envObj.coord), action, curr)) 
+                s.add(m)
+    
+    print("The path is as follows : \n")
+    printPath(curr)
