@@ -41,7 +41,7 @@ class Coordinate :
 # function <printPath> prints path using recursion from <destination> node
 # and going back to the starting node and start printing nodes from starting
 # node to destination node
-def printPath(destination) :
+def printPath(destination ) :
     if(destination is None) : return 0
     temp = printPath(destination.parent)
     print(destination.action, destination.pos.toString())
@@ -79,32 +79,14 @@ class Environment :
             if(r >= self.m-1 or self.M[r+1][c] == 1) : return False      #if action is invalid
             self.agentPos = Coordinate(r+1, c);  #update position of agent
             return True
-        elif (action == 'left-up') :
-            if(r <= 0 or c <= 0 or self.M[r-1][c-1]) : return False
-            self.agentPos = Coordinate(r-1, c-1)
-            return True
-        elif (action == 'right-up') :
-            if(c >= self.n-1 or r <= 0 or self.M[r-1][c+1]) : return False
-            self.agentPos = Coordinate(r-1, c+1)
-            return True
-        elif (action == 'left-down') : 
-            if(c <= 0 or r >= self.m-1 or self.M[r+1][c-1]) : return False
-            self.agentPos = Coordinate(r+1, c-1)
-            return True
-        elif (action == 'right-down') :
-            if(c >= self.n-1 or r >= self.m-1 or self.M[r+1][c+1]) : return False
-            self.agentPos = Coordinate(r+1, c+1)
-            return True
         else : return False
         
     def providePerception(self, currPos) :
         # <__eq__> function of class <Coordinate> will be called
         return currPos == self.goalPos    
 
-    def euclidDist(self, curr) :
-        return math.sqrt(self.sumOfSquares(curr, self.goalPos))
-    def sumOfSquares(self, curr, goal) :
-        return (curr.x - goal.x)*(curr.x-goal.x) + (curr.y - goal.y)*(curr.y-goal.y)
+    def manhattanDist(self, curr) :
+        return math.fabs(self.goalPos.x-curr.x) + math.fabs(self.goalPos.y-curr.y)
         
 class Agent :
     
@@ -123,7 +105,7 @@ M = np.array([[1, 0, 0, 1, 1, 1, 0, 1, 1, 1 ],
               [1, 1, 0, 0, 1, 1, 0, 1, 0, 1 ],
               [0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
               [1, 1, 1, 0, 0, 1, 1, 0, 1, 0 ],
-              [1, 0, 0, 1, 0, 1, 0, 1, 0, 0 ],
+              [1, 0, 0, 1, 0, 0, 0, 1, 0, 0 ],
               [1, 0, 0, 0, 0, 0, 0, 0, 0, 1 ],
               [1, 0, 1, 0, 1, 0, 0, 1, 1, 1 ],
               [1, 1, 0, 0, 0, 0, 1, 0, 0, 1 ]])
@@ -132,14 +114,15 @@ print "__________________________"
 print "GRID"
 print M
 print "__________________________"
-print "Heuristic = Euclidean Distance"
-print "Moves Allowed = left,right,up,down,leftUp,leftDown,rightUp,rightDown"
+print "Heuristic = Manhattan Distance"
+print "Moves Allowed = left,right,up,down"
 start = Coordinate(6, 4)
 print "__________________________"
 print "Source = ", start.toString()
 # <end> represents goal position
 end = Coordinate(1, 1)
 print "Goal = ", end.toString()
+print "__________________________"
 # creating an instance <envObj> of class Environment initialized with matrix M,
 # starting position <start> and goal position <end>
 envObj = Environment(M, start, end)
@@ -147,7 +130,7 @@ agent = Agent()
 # putting <start> node into queue
 A_Track = M.copy().astype(np.float)
 A_Track[A_Track == 1] = float('Inf')
-q.put(Node(start, 'None', None, 0, envObj.euclidDist(start)))
+q.put(Node(start, 'None', None, 0, envObj.manhattanDist(start)))
 # envObj.M[start.x][start.y] = 1
 destination = None
 c = 1
@@ -160,8 +143,7 @@ while(not q.empty()) :
         A_Track[curr.pos.x][curr.pos.y] = c
         destination = curr
         break
-    actionList = ['left', 'right', 'up', 'down', 'left-up', 'right-up', 
-                  'left-down', 'right-down']
+    actionList = ['left', 'right', 'up', 'down']
     currPos = curr.pos
     if(envObj.M[currPos.x][currPos.y] == 1) : continue
     # print("c = ", c, "curr.pos.x = ", curr.pos.x, "curr.pos.y = ", curr.pos.y)
@@ -173,11 +155,10 @@ while(not q.empty()) :
         flag = agent.takeAction(envObj, action, copy.copy(currPos))
         if flag :
             # if action is valid, then put that node into the queue
-            q.put(Node(copy.copy(envObj.agentPos), action, curr, curr.g+1, envObj.euclidDist(envObj.agentPos)))
+            q.put(Node(copy.copy(envObj.agentPos), action, curr, curr.g+1, envObj.manhattanDist(envObj.agentPos)))
 if(destination is None) :
     print("Not reachable")
 else :
-    print "__________________________"
     print "SHORTEST PATH:"
     cost = printPath(destination)
     print "__________________________"

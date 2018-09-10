@@ -41,7 +41,7 @@ class Coordinate :
 # function <printPath> prints path using recursion from <destination> node
 # and going back to the starting node and start printing nodes from starting
 # node to destination node
-def printPath(destination) :
+def printPath(destination ) :
     if(destination is None) : return 0
     temp = printPath(destination.parent)
     print(destination.action, destination.pos.toString())
@@ -78,22 +78,6 @@ class Environment :
         elif (action == 'down') :         #move empty block down
             if(r >= self.m-1 or self.M[r+1][c] == 1) : return False      #if action is invalid
             self.agentPos = Coordinate(r+1, c);  #update position of agent
-            return True
-        elif (action == 'left-up') :
-            if(r <= 0 or c <= 0 or self.M[r-1][c-1]) : return False
-            self.agentPos = Coordinate(r-1, c-1)
-            return True
-        elif (action == 'right-up') :
-            if(c >= self.n-1 or r <= 0 or self.M[r-1][c+1]) : return False
-            self.agentPos = Coordinate(r-1, c+1)
-            return True
-        elif (action == 'left-down') : 
-            if(c <= 0 or r >= self.m-1 or self.M[r+1][c-1]) : return False
-            self.agentPos = Coordinate(r+1, c-1)
-            return True
-        elif (action == 'right-down') :
-            if(c >= self.n-1 or r >= self.m-1 or self.M[r+1][c+1]) : return False
-            self.agentPos = Coordinate(r+1, c+1)
             return True
         else : return False
         
@@ -133,13 +117,14 @@ print "GRID"
 print M
 print "__________________________"
 print "Heuristic = Euclidean Distance"
-print "Moves Allowed = left,right,up,down,leftUp,leftDown,rightUp,rightDown"
+print "Moves Allowed = left,right,up,down"
 start = Coordinate(6, 4)
 print "__________________________"
 print "Source = ", start.toString()
 # <end> represents goal position
 end = Coordinate(1, 1)
 print "Goal = ", end.toString()
+print "__________________________"
 # creating an instance <envObj> of class Environment initialized with matrix M,
 # starting position <start> and goal position <end>
 envObj = Environment(M, start, end)
@@ -160,8 +145,7 @@ while(not q.empty()) :
         A_Track[curr.pos.x][curr.pos.y] = c
         destination = curr
         break
-    actionList = ['left', 'right', 'up', 'down', 'left-up', 'right-up', 
-                  'left-down', 'right-down']
+    actionList = ['left', 'right', 'up', 'down']
     currPos = curr.pos
     if(envObj.M[currPos.x][currPos.y] == 1) : continue
     # print("c = ", c, "curr.pos.x = ", curr.pos.x, "curr.pos.y = ", curr.pos.y)
@@ -177,7 +161,6 @@ while(not q.empty()) :
 if(destination is None) :
     print("Not reachable")
 else :
-    print "__________________________"
     print "SHORTEST PATH:"
     cost = printPath(destination)
     print "__________________________"
