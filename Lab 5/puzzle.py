@@ -69,7 +69,7 @@ class Matrix :
 class Environment :
 
     def __init__(self, n, M) :
-        self.coord = Coordinate(n-1, n-1);
+        self.coord = Coordinate(n-1, n-1)
         self.n = n
         self.M = M
         
