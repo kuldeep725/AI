@@ -95,8 +95,12 @@ class Environment :
                     self.M[r][c-1], self.M[r][c])
             if(blank == "blank1") : 
                 self.coord1 = Coordinate(r, c-1);
+                if(self.isEqual(self.coord2, Coordinate(r, c))) :
+                    self.coord2 = Coordinate(r, c)
             else :
                 self.coord2 = Coordinate(r, c-1);   
+                if(self.isEqual(self.coord1, Coordinate(r, c))) :
+                    self.coord1 = Coordinate(r, c)
             return True
         elif (action == 'right') :     #move empty block right
             if(c >= self.n-1) : return False   #if action is invalid
@@ -104,8 +108,12 @@ class Environment :
                     self.M[r][c+1], self.M[r][c])
             if(blank == "blank1") : 
                 self.coord1 = Coordinate(r, c+1);   
+                if(self.isEqual(self.coord2, Coordinate(r, c))) :
+                    self.coord2 = Coordinate(r, c)
             else :
                 self.coord2 = Coordinate(r, c+1);   
+                if(self.isEqual(self.coord1, Coordinate(r, c))) :
+                    self.coord1 = Coordinate(r, c)
             return True
         elif (action == 'up') :        #move empty block up
             if(r <= 0) : return  False      #if action is invalid
@@ -113,8 +121,14 @@ class Environment :
                     self.M[r][c], self.M[r-1][c])
             if(blank == "blank1") : 
                 self.coord1 = Coordinate(r-1, c); 
+                if(self.isEqual(self.coord2, Coordinate(r, c))) :
+                    self.coord2 = Coordinate(r, c)
+                    print("coord2 = ", (r, c))
             else :
                 self.coord2 = Coordinate(r-1, c);  
+                if(self.isEqual(self.coord1, Coordinate(r, c))) :
+                    self.coord1 = Coordinate(r, c)
+                    print("coord1 = ", (r, c))
             return True
         elif (action == 'down') :         #move empty block down
             if(r >= self.n-1) : return False      #if action is invalid
@@ -122,8 +136,12 @@ class Environment :
                     self.M[r][c], self.M[r+1][c])
             if(blank == "blank1") : 
                 self.coord1 = Coordinate(r+1, c); 
+                if(self.isEqual(self.coord2, Coordinate(r, c))) :
+                    self.coord2 = Coordinate(r, c)
             else :
                 self.coord2 = Coordinate(r+1, c);  
+                if(self.isEqual(self.coord1, Coordinate(r, c))) :
+                    self.coord1 = Coordinate(r, c)
             return True
         else : return False
         
@@ -176,6 +194,7 @@ def printPath(curr, tot) :
 
 # stores explored states
 s = set()
+# q = Queue()
 q = PriorityQueue()
 # M = np.array([[3, 1, 2], [4, 5, 8], [6, 7, 9]]) # elements from 1 to n*n
 # M = np.array([[3, 6, 2], [4, 8, 1], [5, 7, 9]]) # elements from 1 to n*n
@@ -216,7 +235,7 @@ while (not q.empty()) :
 
         flag = agent.takeAction(envObj, action, b1)
         m = Matrix(copy.copy(envObj.M))
-        envObj.coord2 = getIndex(M, n*n, n)
+#        print("flag", flag, "visited", m not in s)
         if(flag and (m not in s)) :
             q.put(Node(envObj.M.copy(), copy.copy(envObj.coord1), copy.copy(envObj.coord2), action, curr, b1, countInversions(envObj.M, n))) 
             s.add(m)
@@ -225,10 +244,8 @@ while (not q.empty()) :
         envObj.M = curr.M.copy()
         envObj.coord1 = copy.copy(curr.pos1)
         envObj.coord2 = copy.copy(curr.pos2)
-
         flag = agent.takeAction(envObj, action, b2)
         m = Matrix(copy.copy(envObj.M))
-        envObj.coord1 = getIndex(M, n*n-1, n)
 #        print("flag", flag, "visited", m not in s)
         if(flag and (m not in s)) :
             q.put(Node(envObj.M.copy(), copy.copy(envObj.coord1), copy.copy(envObj.coord2), action, curr, b2, countInversions(envObj.M, n))) 
@@ -237,3 +254,4 @@ while (not q.empty()) :
 print("path reached")
 tot = printPath(curr, 0)
 print("Total steps = ", tot)
+
